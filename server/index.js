@@ -8,7 +8,9 @@ import morgan from "morgan"
 import path from "path"
 import { fileURLToPath } from "url"
 import connectDb from "./database/connect.js"
-
+import adminRoute from "./routes/admin.js"
+import { createEmployee } from './controllers/employee.js';
+import { authenticateToken } from './middleware/auth.js';
 
 //configuration
 const __filename=fileURLToPath(import.meta.url);
@@ -36,9 +38,9 @@ const storage=multer.diskStorage({
 const upload=multer({storage})
 
 //routes
-app.use('/',(req,res)=>{
-    res.send('hey Node')
-})
+app.use('/api/admin',adminRoute)
+app.post('/api/admin/employeeRegister',authenticateToken,
+    upload.single("picture"),createEmployee)
 
 
 //server
