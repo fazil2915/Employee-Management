@@ -9,51 +9,52 @@ import path from "path"
 import { fileURLToPath } from "url"
 import connectDb from "./database/connect.js"
 import adminRoute from "./routes/admin.js"
-import { createEmployee } from './controllers/employee.js';
+import { createEmployee, updateEmployee } from './controllers/employee.js';
 import { authenticateToken } from './middleware/auth.js';
 
 //configuration
-const __filename=fileURLToPath(import.meta.url);
-const __dirname=path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 dotenv.config();
-const app= express()
+const app = express()
 
 app.use(express.json());
 app.use(helmet());
-app.use(helmet.crossOriginResourcePolicy({policy:"cross-origin"}));
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
-app.use(bodyParser.json({limit:"30mb",extended:true}))
-app.use(bodyParser.urlencoded({limit:"30mb",extended:true}));
+app.use(bodyParser.json({ limit: "30mb", extended: true }))
+app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 //File storage path
-app.use('/assets',express.static(path.join(__dirname,'public/assets')));
+app.use('/assets', express.static(path.join(__dirname, 'public/assets')));
 
-const storage=multer.diskStorage({
-    destination:function(req,file,cb){
-        cb(null,'public/assets');
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/assets');
     },
-    filename:function(req,file,cb){
-        cb(ull,file.originalname);
+    filename: function (req, file, cb) {
+        cb(ull, file.originalname);
     },
 });
-const upload=multer({storage})
+const upload = multer({ storage })
 
 //routes
-app.use('/api/admin',adminRoute)
-app.post('/api/admin/employeeRegister',authenticateToken,
-    upload.single("picture"),createEmployee)
-
+app.use('/api/admin', adminRoute)
+app.post('/api/admin/employeeRegister', authenticateToken,
+    upload.single("picture"), createEmployee)
+app.post('/api/admin/updateEmployee/:employeeId', authenticateToken, upload.single("picture"),
+    updateEmployee)
 
 //server
-const server=()=>{
+const server = () => {
     try {
         connectDb(process.env.MONGO_URL);
-        app.listen(process.env.PORT||8000,()=>{
+        app.listen(process.env.PORT || 8000, () => {
             console.log(`server running on http://localhost:${process.env.PORT}`);
-            
+
         })
     } catch (error) {
         console.log(error);
-        
+
     }
 }
 server()
