@@ -2,10 +2,11 @@ import jwt from 'jsonwebtoken';
 import { addToBlacklist, isBlacklisted } from './blacklist.js';
 
 // Helper function to generate tokens
-export const generateTokens = (userId) => {
-    const accessToken = jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '15m' });
-    const refreshToken = jwt.sign({ id: userId }, process.env.JWT_SECRET_REFRESH, { expiresIn: '1d' });
-    return { accessToken, refreshToken };
+export const generateTokens = (user) => {
+    const userdetails=user
+    const accessToken = jwt.sign({ id: userdetails._id }, process.env.JWT_SECRET, { expiresIn: '15m' });
+    const refreshToken = jwt.sign({ id: userdetails._id }, process.env.JWT_SECRET_REFRESH, { expiresIn: '1d' });
+    return { accessToken, refreshToken,userdetails };
 };
 
 // Authenticate and refresh token middleware
@@ -64,6 +65,7 @@ export const authenticateToken = async (req, res, next) => {
                     // Send new tokens to the client
                     res.status(200).json({
                         message: 'Access token refreshed.',
+                        user:newTokens.userdetails,
                         accessToken: newTokens.accessToken,
                         refreshToken: newTokens.refreshToken,
                     });

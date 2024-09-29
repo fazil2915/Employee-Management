@@ -12,9 +12,10 @@ import {
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Formik } from "formik";
 import * as yup from "yup";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Dropzone from "react-dropzone";
 import FlexBetween from "@/components/FlexBetween";
+import { useAccessProtectedRoute } from "../../helper/token";
 
 const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 const EmployeeRegisterSchema = yup.object().shape({
@@ -41,52 +42,41 @@ function EmployeeForm() {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const token = useSelector((state) => state.token);
+  const accessProtectedRoute = useAccessProtectedRoute()
 
   const createEmployee = async (values, onSubmitProps) => {
     // Create FormData object to handle file and other form fields
     const formData = new FormData();
-    
+
     // Append all form fields to FormData
     for (let key in values) {
       if (key === "picture") {
-        formData.append("picture", values.picture); // Append the file directly
+        formData.append("picture", values.picture);
       } else {
         formData.append(key, values[key]);
       }
     }
-    formData.append("picturePath", values.picture.name); 
-    
+    formData.append("picturePath", values.picture.name);
+
     try {
       // Send FormData directly in the body
-      const savedUserResponse = await fetch(
+      const savedUserResponse = await accessProtectedRoute(
         `${import.meta.env.VITE_BASE_URL}/api/admin/employeeRegister`,
         {
           method: "POST",
-          body: formData,  
-          headers: { 
-            Authorization: `Bearer ${token.accessToken}`,
-            'x-refresh-token': `${token.requiredToken}`,
-            // 'Content-Type': 'multipart/form-data' // No need to set this header manually with FormData
-          },
+          body: formData,
         }
       );
-      
-      // Parse the response
-      const savedUser = await savedUserResponse.json();
-      
-      // Reset the form if the user is saved
-      if (savedUser) {
-        onSubmitProps.resetForm();
-      }
+
     } catch (error) {
       console.error("Error:", error);
     }
   };
-  
 
-  const handleFormSubmit = async  (values, onSubmitProps) => {
+
+  const handleFormSubmit = async (values, onSubmitProps) => {
     await createEmployee(values, onSubmitProps);
-    console.log(values);
+    onSubmitProps.resetForm();
   };
 
   return (
@@ -182,7 +172,7 @@ function EmployeeForm() {
                   value={values.gender}
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  row // This will align the radio buttons horizontally; remove it for vertical alignment
+                  row 
                 >
                   <FormControlLabel value="Male" control={<Radio />} label="Male" />
                   <FormControlLabel value="female" control={<Radio />} label="Female" />

@@ -38,9 +38,22 @@ try {
     if(!employee) return res.status(404).json({message: 'Employee not found'});
     res.status(200).json(employee);
 } catch (error) {
-    res.status(404).json({message: error.message});
+    res.status(500).json({message: error.message});
 }
 }
+
+export const getSingleEmployee=async (req, res) =>{
+    try {
+        const {id}=req.params
+        const employee=await Employee.findById(id)
+        if(!employee) return res.status(404).json({message: 'Employee not found'});
+
+        res.status(200).json(employee);
+    } catch (error) {
+        res.status(500).json({message: error.message});  
+    }
+}
+
 
 export const updateEmployee = async (req, res) => {
     try {
@@ -54,7 +67,8 @@ export const updateEmployee = async (req, res) => {
             course 
         } = req.body;
 
-        
+        const file = req.file;
+        const pictureUrl = file.path; 
         const updatedEmployee = await Employee.findByIdAndUpdate(
             employeeId, 
             {
@@ -63,7 +77,8 @@ export const updateEmployee = async (req, res) => {
                 phone,
                 designation,
                 gender,
-                course
+                course,
+                picture:pictureUrl
             }, 
             { new: true, runValidators: true } // new: true returns the updated document
         );
@@ -80,3 +95,18 @@ export const updateEmployee = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+
+
+
+export const deleteEmployee = async (req, res) => {
+    const {id}=req.params
+
+    const employee=await Employee.findById(id)
+    if(!employee) return res.status(404).json({message: 'Employee not found'});
+
+    const deletedEmployee= await Employee.deleteOne(employee);
+
+    if(!deletedEmployee) return res.status(500).json({message: 'Failed to delete employee'});
+    
+    res.status(200).json({message: 'Successfully deleted employee'});
+} 
