@@ -21,7 +21,7 @@ import {
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { setLogout } from "@/state";
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import FlexBetween from "@/components/FlexBetween";
 import { lightBlue } from "@mui/material/colors";
 
@@ -29,7 +29,8 @@ const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  //const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user);
+  const [anchorEl, setAnchorEl] = useState(null);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
 
   const theme = useTheme();
@@ -39,7 +40,11 @@ const Navbar = () => {
   const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
 
-  // const fullName = `${user.firstName} & ${user.lastName}`;
+  
+  const handleMenuToggle = (event) => {
+    setAnchorEl(anchorEl ? null : event.currentTarget);
+  };
+ 
 
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
@@ -58,7 +63,7 @@ const Navbar = () => {
         >
           Employee Management System
         </Typography>
-        
+
       </FlexBetween>
 
       {/* DESKTOP NAV */}
@@ -67,9 +72,9 @@ const Navbar = () => {
           <Message sx={{ fontSize: "25px" }} />
           <Notifications sx={{ fontSize: "25px" }} />
           <Help sx={{ fontSize: "25px" }} />
-          <FormControl variant="standard" >
+          <FormControl variant="standard" value={user.userName} >
             <Select
-            
+              value={user.userName}
               sx={{
                 backgroundColor: neutralLight,
                 width: "150px",
@@ -85,8 +90,8 @@ const Navbar = () => {
               }}
               input={<InputBase />}
             >
-              <MenuItem >
-                <Typography></Typography>
+              <MenuItem value={user.userName}>
+                <Typography>{user.userName}</Typography>
               </MenuItem>
               <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
             </Select>
@@ -129,13 +134,13 @@ const Navbar = () => {
             alignItems="center"
             gap="3rem"
           >
-           
+
             <Message sx={{ fontSize: "25px" }} />
             <Notifications sx={{ fontSize: "25px" }} />
             <Help sx={{ fontSize: "25px" }} />
-            <FormControl variant="standard" value={fullName}>
+            <FormControl variant="standard" value={user.userName}>
               <Select
-                value={fullName}
+                value={user.userName}
                 sx={{
                   backgroundColor: neutralLight,
                   width: "150px",
@@ -151,12 +156,13 @@ const Navbar = () => {
                 }}
                 input={<InputBase />}
               >
-                <MenuItem value="test">
-                  <Typography>"test"</Typography>
+                <MenuItem value={user.userName}>
+                  <Typography>{user.userName}</Typography>
                 </MenuItem>
-                <MenuItem onClick={() => dispatch(setLogout())}>
-                  Log Out
-                </MenuItem>
+                  <MenuItem onClick={() => dispatch(setLogout())}>
+                    Log Out
+                  </MenuItem>
+                
               </Select>
             </FormControl>
           </FlexBetween>

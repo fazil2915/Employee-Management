@@ -6,7 +6,7 @@ import {
   useMediaQuery,
   useTheme,
   Menu,
-  MenuItem  
+  MenuItem
 } from '@mui/material'
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -16,28 +16,73 @@ import { setLogin } from "@/state";
 
 //form schema 
 const loginSchema = yup.object().shape({
-    userName: yup.string().required("required"),
-    password: yup.string().required("required")
-  
-  });
+  userName: yup.string().required("required"),
+  password: yup.string().required("required")
 
-const initialValueLogin={
-    userName: '',
-    password: '',
-  
+});
+
+const initialValueLogin = {
+  userName: '',
+  password: '',
+
 };
 
-const Form=()=>{
-const dispatch=useDispatch();
-const { palette } = useTheme();
-const isNonMobile = useMediaQuery("(min-width:600px)");
+const Form = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { palette } = useTheme();
+  const isNonMobile = useMediaQuery("(min-width:600px)");
 
-return (
+  //api
+  const login = async (values,onSubmitProps) => {
+    const formData = new FormData();
+    for (let value in values) {
+      formData.append(value, values[value]);
+    }
+    try {
+      const body = JSON.stringify(values)
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/api/admin/login`, {
+        method: "POST",
+        body,
+        headers: {
+          "Content-Type": "application/json",
+           body: JSON.stringify(values),
+        },
+
+      });
+      const loggedIn = await response.json();
+
+      if (loggedIn) {
+        onSubmitProps.resetForm();
+        dispatch(
+          setLogin({
+            user: loggedIn.user,
+            token: loggedIn.token,
+          })
+        );
+        navigate("/dashboard");
+      } else {
+        console.error("Error in login:", loggedIn.message || loggedIn.error);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  const handleFormSubmit = async (values, onSubmitProps) => {
+    console.log(values);
+
+    await login(values, onSubmitProps);
+  }
+
+
+  return (
     <Formik
-    initialValues={initialValueLogin}
-    validationSchema={loginSchema}
+      onSubmit={handleFormSubmit}
+      initialValues={initialValueLogin}
+      validationSchema={loginSchema}
     >
-        {({
+      {({
         values,
         errors,
         touched,
@@ -45,8 +90,8 @@ return (
         handleChange,
         handleSubmit,
         resetForm,
-      })=>(
-        <form >
+      }) => (
+        <form onSubmit={handleSubmit}>
           <Box
             display="grid"
             gap="30px"
@@ -89,19 +134,19 @@ return (
                 backgroundColor: palette.primary.main,
                 color: palette.background.alt,
                 "&:hover": { color: palette.primary.dark },
-                fontWeight:"bold",
-                fontSize:"16px",
+                fontWeight: "bold",
+                fontSize: "16px",
               }}
             >
               Login
             </Button>
-            
+
           </Box>
         </form>
       )}
 
     </Formik>
-)
+  )
 }
 
 export default Form;

@@ -1,5 +1,5 @@
 import Employee from '../models/employee.js'
-
+import { v2 as cloudinary } from 'cloudinary';
 export const createEmployee=async (req,res)=>{
     try {
         const {
@@ -8,10 +8,12 @@ export const createEmployee=async (req,res)=>{
             phone,
             designation,
             gender,
-            course,
-            picture
+            course
+            
         }=req.body;
 
+        const file = req.file;
+        const pictureUrl = file.path;  
         const newEmployee=new Employee({
             name,
             email,
@@ -19,12 +21,12 @@ export const createEmployee=async (req,res)=>{
             designation,
             gender,
             course,
-            picture
+            picture:pictureUrl
         })
         await newEmployee.save();
         res.status(201).json(newEmployee);
     } catch (error) {
-        res.status(404).json({message: error.message});
+        res.status(500).json({message: error.message});
     }
 }
 

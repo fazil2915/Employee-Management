@@ -25,6 +25,7 @@ function Dashboard() {
       gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' // Responsive grid layout
     }}
   >
+    <Typography variant="h2" color="textPrimary" fontWeight="regular">Welcome To Admin Panel</Typography>
     <Card sx={{ maxWidth: 345}}    onClick={() => navigate("/employeeList")}>
       <CardActionArea sx={{backgroundColor:"lightblue"}}> 
         <CardContent>
