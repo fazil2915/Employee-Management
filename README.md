@@ -1,6 +1,6 @@
 # Employee-Management
 ## Overview
-This project is a RESTful API service for a CRUD application, built using Node.js, Express.js, and MongoDB for the backend, with a React frontend. It provides a robust solution for efficiently handling create, read, update, and delete operations.
+This project is a RESTful API service for an employee management application, built using Node.js, Express.js, and MongoDB for the backend, with a React frontend. It provides a robust solution for handling create, read, update, and delete operations related to employee records efficiently.
 
 
 ## Technologies Used
