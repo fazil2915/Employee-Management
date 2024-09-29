@@ -3,10 +3,10 @@ import { addToBlacklist, isBlacklisted } from './blacklist.js';
 
 // Helper function to generate tokens
 export const generateTokens = (user) => {
-    const userdetails=user
-    const accessToken = jwt.sign({ id: userdetails._id }, process.env.JWT_SECRET, { expiresIn: '15m' });
-    const refreshToken = jwt.sign({ id: userdetails._id }, process.env.JWT_SECRET_REFRESH, { expiresIn: '1d' });
-    return { accessToken, refreshToken,userdetails };
+   
+    const accessToken = jwt.sign({ id: user._id, userName: user.userName }, process.env.JWT_SECRET, { expiresIn: '15m' });
+    const refreshToken = jwt.sign({ id: user._id, userName: user.userName}, process.env.JWT_SECRET_REFRESH, { expiresIn: '1d' });
+    return { accessToken, refreshToken };
 };
 
 // Authenticate and refresh token middleware
@@ -61,11 +61,15 @@ export const authenticateToken = async (req, res, next) => {
 
                     // Generate new access and refresh tokens
                     const newTokens = generateTokens(decodedRefresh.id);
+                    console.log('Decoded Refresh Token:', decodedRefresh);
 
                     // Send new tokens to the client
                     res.status(200).json({
                         message: 'Access token refreshed.',
-                        user:newTokens.userdetails,
+                        user: {
+                            id: decodedRefresh.id,
+                            userName: decodedRefresh.userName, 
+                        },
                         accessToken: newTokens.accessToken,
                         refreshToken: newTokens.refreshToken,
                     });

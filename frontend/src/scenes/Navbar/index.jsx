@@ -12,8 +12,6 @@ import {
 } from "@mui/material";
 import {
   Message,
-  DarkMode,
-  LightMode,
   Notifications,
   Help,
   Menu,
@@ -29,22 +27,17 @@ const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user) || {};
   const [anchorEl, setAnchorEl] = useState(null);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
-
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
-  const dark = theme.palette.neutral.dark;
   const background = theme.palette.background.default;
-  const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
 
-  
   const handleMenuToggle = (event) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
- 
 
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
@@ -63,7 +56,6 @@ const Navbar = () => {
         >
           Employee Management System
         </Typography>
-
       </FlexBetween>
 
       {/* DESKTOP NAV */}
@@ -72,9 +64,9 @@ const Navbar = () => {
           <Message sx={{ fontSize: "25px" }} />
           <Notifications sx={{ fontSize: "25px" }} />
           <Help sx={{ fontSize: "25px" }} />
-          <FormControl variant="standard" value={user.userName} >
+          <FormControl variant="standard">
             <Select
-              value={user.userName}
+              value={user.userName || ''}
               sx={{
                 backgroundColor: neutralLight,
                 width: "150px",
@@ -91,16 +83,14 @@ const Navbar = () => {
               input={<InputBase />}
             >
               <MenuItem value={user.userName}>
-                <Typography>{user.userName}</Typography>
+                <Typography>{user.userName || 'Guest'}</Typography> {/* Default to 'Guest' */}
               </MenuItem>
               <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
             </Select>
           </FormControl>
         </FlexBetween>
       ) : (
-        <IconButton
-          onClick={() => setIsMobileMenuToggled(!isMobileMenuToggled)}
-        >
+        <IconButton onClick={() => setIsMobileMenuToggled(!isMobileMenuToggled)}>
           <Menu />
         </IconButton>
       )}
@@ -119,9 +109,7 @@ const Navbar = () => {
         >
           {/* CLOSE ICON */}
           <Box display="flex" justifyContent="flex-end" p="1rem">
-            <IconButton
-              onClick={() => setIsMobileMenuToggled(!isMobileMenuToggled)}
-            >
+            <IconButton onClick={() => setIsMobileMenuToggled(!isMobileMenuToggled)}>
               <Close />
             </IconButton>
           </Box>
@@ -134,13 +122,12 @@ const Navbar = () => {
             alignItems="center"
             gap="3rem"
           >
-
             <Message sx={{ fontSize: "25px" }} />
             <Notifications sx={{ fontSize: "25px" }} />
             <Help sx={{ fontSize: "25px" }} />
-            <FormControl variant="standard" value={user.userName}>
+            <FormControl variant="standard">
               <Select
-                value={user.userName}
+                value={user.userName || ''}
                 sx={{
                   backgroundColor: neutralLight,
                   width: "150px",
@@ -157,12 +144,9 @@ const Navbar = () => {
                 input={<InputBase />}
               >
                 <MenuItem value={user.userName}>
-                  <Typography>{user.userName}</Typography>
+                  <Typography>{user.userName || 'Guest'}</Typography> 
                 </MenuItem>
-                  <MenuItem onClick={() => dispatch(setLogout())}>
-                    Log Out
-                  </MenuItem>
-                
+                <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
               </Select>
             </FormControl>
           </FlexBetween>

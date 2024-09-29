@@ -9,7 +9,7 @@ import { useAccessProtectedRoute } from "../../helper/token";
 function EmployeeList() {
   const [employeeList, setEmployeeList] = useState([]);
   const [searchTerm, setSearchTerm] = useState(''); // State for search term
-  const [filteredEmployees, setFilteredEmployees] = useState([]); // Filtered employees
+  const [filteredEmployees, setFilteredEmployees] = useState([]); 
   const navigate = useNavigate();
   const { palette } = useTheme();
   const accessProtectedRoute = useAccessProtectedRoute();
