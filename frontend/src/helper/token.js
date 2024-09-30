@@ -23,7 +23,7 @@ export const useAccessProtectedRoute = () => {
 
       // Check if the response contains a message indicating token refresh
       if (data.message === "Access token refreshed.") {
-        console.log("Token was refreshed",data);
+        //console.log("Token was refreshed",data);
 
         dispatch(setLogin({
           user: data.user,
@@ -46,17 +46,17 @@ export const useAccessProtectedRoute = () => {
         data = await response.json(); // Parse the new response data
       }
 
-      // Handle non-200 responses
+      
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      return data; // Return the final response data
+      return data; 
     } catch (error) {
       console.error("Error accessing protected route:", error);
-      throw error; // Propagate error to the caller
+      throw error;
     }
   };
 
-  return accessProtectedRoute; // Return the function for use in components
+  return accessProtectedRoute; 
 };
