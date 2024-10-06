@@ -1,5 +1,7 @@
 import Employee from '../models/employee.js'
 import { v2 as cloudinary } from 'cloudinary';
+
+
 export const createEmployee=async (req,res)=>{
     try {
         const {
